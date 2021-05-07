@@ -12,13 +12,16 @@ import requests
 #Importing os module to use for clearing the screen.
 import os
 
+# Importing matplotlib for generating graph
+import matplotlib.pyplot as mplot 
+
 """Function to retrive the data from Data USA API and ask user to input year to find out thepopulation of that year"""
 
 def findPopulation():
     # create request object for Data USA.
     reqDataUSA = requests.get("https://datausa.io/api/data?drilldowns=Nation&measures=Population")
-    # Using os moudle to clear the screen.
-    os.system('clear')
+    # Displa the label for the list of years
+    print("\n List of year population")
 
     # This for loop to iterate based on the length of the data from the dictionary.
     for x in range(len(reqDataUSA.json().get('data'))):
@@ -50,7 +53,46 @@ def findPopulation():
         # This else is when the user input is not an digit.
         print("The choice you have enter is not present")
 
-""" Main function to ask user whether or not to continue for finding the population"""
+""" Function to generate pie chart for the population"""
+def createGraph():
+     # Create request object for Data USA.
+    reqDataUSA = requests.get("https://datausa.io/api/data?drilldowns=Nation&measures=Population")
+    # Initializing list for labels to display year and populaiton.
+    displayLabels = []
+
+    # Initalizing list for population to calculate the percentage for pie chart.
+    populationList = []
+
+    # Initializing list for population percentage for pie chart.
+    sizes = []
+
+    # This for loop to iterate based on the length of the data from the dictionary.
+    for x in range(len(reqDataUSA.json().get('data'))):
+        # Concatenating year and population to add it in the lable list.
+        labelYearPopulation = reqDataUSA.json().get('data')[x].get('Year'),reqDataUSA.json().get('data')[x].get('Population')
+        # Adding the list for label.
+        displayLabels.append(labelYearPopulation)
+        # Adding the list to use for creating the size list
+        populationList.append(reqDataUSA.json().get('data')[x].get('Population'))
+
+    # This for loop is to append the size list with the percentage of population to use in pie chart.
+    for y in populationList: 
+        # Calculate the percentage value
+        sizeValue =int((y/sum(populationList))*100)
+        # Adding the percentage value in the sizes list
+        sizes.append(sizeValue)
+    # Tuples to use in the pie chart 
+    explode = (0,0,0,0,0,0) 
+    fig1, ax1 = mplot.subplots()
+    ax1.pie(sizes, explode=explode, labels=displayLabels, autopct='%1.1f%%',
+        shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    
+    # Saving the generated pie chart in the given location and with the given name.
+    mplot.savefig("/home/student/static/piePopulationChart.png")
+
+
+""" Main function to ask user what action to perform and also whether or not to continue the program"""
 def main():
     
     # Defining the variable to check whether to continue the program or not
@@ -58,10 +100,20 @@ def main():
     
     # While loop to check the population or to exit
     while toContinue == "Y":
-
-        # calling the funtion to find the population
-        findPopulation()
-
+        # Using os moudle to clear the screen.
+        os.system('clear')
+        # Getting the input from the user to choose what action to perform.
+        inputAction = input("Please select the action \n1. Find Population for a particular year \n2. Download year wise pie chart for Population\n>")
+        
+        # Condition to check and call the action method
+        if int(inputAction) == 1:
+            # calling the funtion to find the population
+            findPopulation()
+        elif int(inputAction) == 2:
+            createGraph()
+            print("Pie Chart graph is generted successfully and placed in /home/student/static/piePopulationChart.png")
+        else:
+            print("You have chosed an incorrect option") 
         # User input whether to continue or not and convert to Upper case for checking
         toContinue = input("\nDo you want to continue (Y / N)?").upper()
 
@@ -70,8 +122,9 @@ def main():
         
         # Display that the user chosen other than Y / N and quiting the program
         print("You have not chosen Y / N, hence quiting the program")
+    
 
 # Check to run if this module is the entry point to this program
 if __name__ == "__main__":
-    # calling main function
+    # Calling main function
     main()
