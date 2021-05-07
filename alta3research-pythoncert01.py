@@ -6,11 +6,11 @@ This program will cover to,
 3. Comments on the code for clarity
 4. script with main()"""
 
-# Importing requests module to retrive objects from API.
-import requests
-
 #Importing os module to use for clearing the screen.
 import os
+
+# Importing requests module to retrive objects from API.
+import requests
 
 # Importing matplotlib for generating graph
 import matplotlib.pyplot as mplot 
@@ -83,7 +83,7 @@ def createGraph():
         sizes.append(sizeValue)
     # Tuples to use in the pie chart 
     explode = (0,0,0,0,0,0) 
-    fig1, ax1 = mplot.subplots()
+    fig1,ax1 = mplot.subplots()
     ax1.pie(sizes, explode=explode, labels=displayLabels, autopct='%1.1f%%',
         shadow=True, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
