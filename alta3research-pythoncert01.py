@@ -78,9 +78,10 @@ def createGraph():
     # This for loop is to append the size list with the percentage of population to use in pie chart.
     for y in populationList: 
         # Calculate the percentage value
-        sizeValue =int((y/sum(populationList))*100)
+        sizeValue =float((y/sum(populationList))*100)
         # Adding the percentage value in the sizes list
         sizes.append(sizeValue)
+    print(sizes)
     # Tuples to use in the pie chart 
     explode = (0,0,0,0,0,0) 
     fig1,ax1 = mplot.subplots()
